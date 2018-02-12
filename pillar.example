@@ -1,0 +1,78 @@
+syncthing:
+    # ftp-style
+    source_path: salt://path-to-config.xml
+
+    # template-style
+    configuration_version: 26 # optional
+    installdir: /opt/syncthing
+    configdir: /home/syncthing
+    download_link: https://github.com/syncthing/syncthing/releases/download/v0.14.43/syncthing-linux-amd64-v0.14.43.tar.gz
+    download_md5: c810dcdc962a09a8857490757e1e3396
+    user: rundeck
+    group: rundeck
+    folders:
+        /home/syncthing/folder1:
+            id: folder1
+            label: folder1-label
+            path: /home/syncthing/folder1
+            type: readwrite
+            rescan_interval: 10
+            devices:
+                - device1
+                - device2
+            stignore:
+                enabled: True
+                # ftp-style
+                source_path: salt://path-to-stignore
+                # template-style
+                files:
+                    - "!file2"
+                    - "*.txt"
+        /home/syncthing/folder2:
+            id: folder2
+            label: folder2-label
+            path: /home/syncthing/folder2
+            type: readwrite
+            rescan_interval: 10
+            devices:
+                - device1
+                - device2
+    devices:
+        device1:
+            name: device1
+            id: HAHLHVH-UHHHOQK-YVYULGW-HZTTTZC-WVVVVVN-JBBBBEP-5SPBBBL-RGBBBB6
+            address: tcp://device1.local:22000
+            auto_accept_folders: 'false'
+        folder2:
+            name: folder2
+            id: KGBT3X4-TK6WU67-GBCBWGB-Y6UJSUZ-CQBIX6C-VFGR4AQ-3XCJAXB-3CV23BI
+            address: dynamic
+            auto_accept_folders: 'false'
+    gui:
+        enabled: 'true'
+        tls: 'true'
+        user: user1
+        # bcrypt hash
+        password: $2a$04$asdfaslñdfkjasdlñfkjasñdlf
+        address: 1.1.1.1:8384
+        apikey: asdfasdfasdfasdfasdfsdfasdfasd
+    options:
+        listen_address: default
+        global_announce_enabled: 'false'
+        local_announce_enabled: 'false'
+        nat_enabled: 'false'
+    
+    certificate_path: /home/syncthing/.config/syncthing/cert.pem # optional; default is $configdir/.config/syncthing/cert.pem 
+    # For the certificate it can be used either the path to the cert
+    certificate_file: salt://cert.pem
+    # or paste the certificate itself (you should use gpg render to encrypt it):
+    certificate: |
+        -----BEGIN CERTIFICATE-----
+        -----END CERTIFICATE-----
+    key_path: /home/syncthing/.config/syncthing/key.pem # optional; default is $configdir/.config/syncthing/key.pem
+    # For the key it can be used either the path to the key
+    key_file: salt://key.pem
+    # or paste the key itself (you should use gpg render to encrypt it):
+    key: |
+        -----BEGIN EC PRIVATE KEY-----
+        -----END EC PRIVATE KEY-----

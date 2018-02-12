@@ -1,0 +1,96 @@
+{%- from "syncthing/map.jinja" import syncthing_settings with context -%}
+<!-- #                                                    -->
+<!-- # This file is managed by salt. Do not edit by hand. -->
+<!-- #                                                    -->
+<configuration version="{{ syncthing_settings.configuration_version|default('26') }}">
+{%- for folder,folder_options in syncthing_settings.folders.items() %}
+    <folder id="{{ folder_options.id }}" label="{{ folder_options.label }}" path="{{ folder_options.path }}" type="{{ folder_options.type|default('readwrite') }}" rescanIntervalS="{{ folder_options.rescan_interval|default('60') }}" fsWatcherEnabled="{{ folder_options.fs_watcher_enabled|default('false') }}" fsWatcherDelayS="{{ folder_options.fs_watcher_delay|default('10') }}" ignorePerms="{{ folder_options.ignore_perms|default('false') }}" autoNormalize="{{ folder_options.auto_normalize|default('true') }}">
+        <filesystemType>{{ folder_options.filesystem_type|default('basic') }}</filesystemType>
+    {%- for device in folder_options.devices %}
+        <device id="{{ syncthing_settings.devices[device].id }}" introducedBy="{{ syncthing_settings.devices[device].introduced_by|default('') }}"></device>
+    {%- endfor %}
+        <minDiskFree unit="{{ folder_options.min_disk_free_units|default('%') }}">{{ folder_options.min_disk_free|default('1') }}</minDiskFree>
+        <versioning>{{ folder_options.versioning|default('') }}</versioning>
+        <copiers>{{ folder_options.copiers|default('0') }}</copiers>
+        <pullers>{{ folder_options.pullers|default('0') }}</pullers>
+        <hashers>{{ folder_options.hashers|default('0') }}</hashers>
+        <order>{{ folder_options.order|default('random') }}</order>
+        <ignoreDelete>{{ folder_options.ignore_delete|default('false') }}</ignoreDelete>
+        <scanProgressIntervalS>{{ folder_options.scan_progress_interval|default('0') }}</scanProgressIntervalS>
+        <pullerPauseS>{{ folder_options.puller_pause|default('0') }}</pullerPauseS>
+        <maxConflicts>{{ folder_options.max_conflicts|default('10') }}</maxConflicts>
+        <disableSparseFiles>{{ folder_options.disable_sparse_files|default('false') }}</disableSparseFiles>
+        <disableTempIndexes>{{ folder_options.disable_temp_indexes|default('false') }}</disableTempIndexes>
+        <paused>{{ folder_options.paused|default('false') }}</paused>
+        <weakHashThresholdPct>{{ folder_options.weak_hash_threshold_pct|default('25') }}</weakHashThresholdPct>
+        <markerName>{{ folder_options.stfolder|default('.stfolder') }}</markerName>
+    </folder>
+{%- endfor %}
+{%- for device,device_options in syncthing_settings.devices.items() %}
+    <device id="{{ device_options.id }}" name="{{ device_options.name }}" compression="{{ device_options.compression|default('metadata') }}" introducer="{{ device_options.introducer|default('false') }}" skipIntroductionRemovals="{{ device_options.skip_introduction_removals|default('false') }}" introducedBy="{{ device_options.introduce_by|default('') }}">
+        <address>{{ device_options.address }}</address>
+        <paused>{{ device_options.paused|default('false') }}</paused>
+        <autoAcceptFolders>{{ device_options.auto_accept_folders|default('false') }}</autoAcceptFolders>
+    </device>
+{%- endfor %}
+{%- if syncthing_settings.gui is defined %}
+    <gui enabled="{{ syncthing_settings.gui.enabled|default('true') }}" tls="{{ syncthing_settings.gui.tls|default('false') }}" debugging="{{ syncthing_settings.gui.debugging|default('false') }}">
+        <address>{{ syncthing_settings.gui.address }}</address>
+    {%- if syncthing_settings.gui.user is defined %}
+        <user>{{ syncthing_settings.gui.user }}</user>
+    {%- endif %}
+    {%- if syncthing_settings.gui.password is defined %}
+        <password>{{ syncthing_settings.gui.password }}</password>
+    {%- endif %}
+        <apikey>{{ syncthing_settings.gui.apikey }}</apikey>
+        <theme>{{ syncthing_settings.gui.theme|default('default') }}</theme>
+    </gui>
+{%- endif %}
+    <options>
+        <listenAddress>{{ syncthing_settings.options.listen_address|default('default') }}</listenAddress>
+        <globalAnnounceServer>{{ syncthing_settings.options.global_announce_server|default('default') }}</globalAnnounceServer>
+        <globalAnnounceEnabled>{{ syncthing_settings.options.global_announce_enabled|default('false') }}</globalAnnounceEnabled>
+        <localAnnounceEnabled>{{ syncthing_settings.options.local_announce_enabled|default('false') }}</localAnnounceEnabled>
+        <localAnnouncePort>{{ syncthing_settings.options.local_announce_port|default('21027') }}</localAnnouncePort>
+        <localAnnounceMCAddr>{{ syncthing_settings.options.local_announce_mcaddr|default('[ff12::8384]:21027') }}</localAnnounceMCAddr>
+        <maxSendKbps>{{ syncthing_settings.options.max_send_kbps|default('0') }}</maxSendKbps>
+        <maxRecvKbps>{{ syncthing_settings.options.max_recv_kbps|default('0') }}</maxRecvKbps>
+        <reconnectionIntervalS>{{ syncthing_settings.options.reconnection_interval|default('60') }}</reconnectionIntervalS>
+        <relaysEnabled>{{ syncthing_settings.options.relays_enabled|default('false') }}</relaysEnabled>
+        <relayReconnectIntervalM>{{ syncthing_settings.options.relay_reconnect_interval|default('10') }}</relayReconnectIntervalM>
+        <startBrowser>{{ syncthing_settings.options.start_browser|default('true') }}</startBrowser>
+        <natEnabled>{{ syncthing_settings.options.nat_enabled|default('false') }}</natEnabled>
+        <natLeaseMinutes>{{ syncthing_settings.options.nat_lease_minutes|default('60') }}</natLeaseMinutes>
+        <natRenewalMinutes>{{ syncthing_settings.options.nat_renewal_minutes|default('30') }}</natRenewalMinutes>
+        <natTimeoutSeconds>{{ syncthing_settings.options.nat_timeout_seconds|default('10') }}</natTimeoutSeconds>
+        <urAccepted>{{ syncthing_settings.options.ur_accepted|default('-1') }}</urAccepted>
+        <urSeen>{{ syncthing_settings.options.ur_seen|default('3') }}</urSeen>
+        <urUniqueID>{{ syncthing_settings.options.ur_uniqueid|default('00000000') }}</urUniqueID>
+        <urURL>{{ syncthing_settings.options.ur_url|default('https://data.syncthing.net/newdata') }}</urURL>
+        <urPostInsecurely>{{ syncthing_settings.options.ur_post_insecurely|default('false') }}</urPostInsecurely>
+        <urInitialDelayS>{{ syncthing_settings.options.ur_initial_delay|default('1800') }}</urInitialDelayS>
+        <restartOnWakeup>{{ syncthing_settings.options.restart_on_wakeup|default('true') }}</restartOnWakeup>
+        <autoUpgradeIntervalH>{{ syncthing_settings.options.auto_upgrade_interval|default('0') }}</autoUpgradeIntervalH>
+        <upgradeToPreReleases>{{ syncthing_settings.options.upgrade_to_prerelease|default('false') }}</upgradeToPreReleases>
+        <keepTemporariesH>{{ syncthing_settings.options.keep_temporaries|default('24') }}</keepTemporariesH>
+        <cacheIgnoredFiles>{{ syncthing_settings.options.cache_ignore_files|default('false') }}</cacheIgnoredFiles>
+        <progressUpdateIntervalS>{{ syncthing_settings.options.progress_update_interval|default('5') }}</progressUpdateIntervalS>
+        <limitBandwidthInLan>{{ syncthing_settings.options.limit_bandwidth_in_lan|default('false') }}</limitBandwidthInLan>
+        <minHomeDiskFree unit="{{ syncthing_settings.options.min_home_disk_free_units|default('%') }}">{{ syncthing_settings.options.min_home_disk_free|default('1') }}</minHomeDiskFree>
+        <releasesURL>{{ syncthing_settings.options.releases_url|default('https://upgrades.syncthing.net/meta.json') }}</releasesURL>
+        <overwriteRemoteDeviceNamesOnConnect>{{ syncthing_settings.options.overwrite_remote_device_names_on_connect|default('false') }}</overwriteRemoteDeviceNamesOnConnect>
+        <tempIndexMinBlocks>{{ syncthing_settings.options.temp_index_min_blocks|default('10') }}</tempIndexMinBlocks>
+        <trafficClass>{{ syncthing_settings.options.traffic_class|default('0') }}</trafficClass>
+        <weakHashSelectionMethod>{{ syncthing_settings.options.weak_hash_selection_method|default('auto') }}</weakHashSelectionMethod>
+        <stunServer>{{ syncthing_settings.options.stun_server|default('default') }}</stunServer>
+        <stunKeepaliveSeconds>{{ syncthing_settings.options.stun_keepalive_seconds|default('24') }}</stunKeepaliveSeconds>
+        <kcpNoDelay>{{ syncthing_settings.options.kcp_nodelay|default('false') }}</kcpNoDelay>
+        <kcpUpdateIntervalMs>{{ syncthing_settings.options.kcp_update_interval|default('25') }}</kcpUpdateIntervalMs>
+        <kcpFastResend>{{ syncthing_settings.options.kcp_fast_resend|default('false') }}</kcpFastResend>
+        <kcpCongestionControl>{{ syncthing_settings.options.kcp_congestion_control|default('true') }}</kcpCongestionControl>
+        <kcpSendWindowSize>{{ syncthing_settings.options.kcp_send_window_size|default('128') }}</kcpSendWindowSize>
+        <kcpReceiveWindowSize>{{ syncthing_settings.options.kcp_receive_window_size|default('128') }}</kcpReceiveWindowSize>
+        <defaultFolderPath>{{ syncthing_settings.options.default_folder_path|default('~') }}</defaultFolderPath>
+        <minHomeDiskFreePct>{{ syncthing_settings.options.min_home_disk_free_pct|default('0') }}</minHomeDiskFreePct>
+    </options>
+</configuration>

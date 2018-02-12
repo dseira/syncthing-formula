@@ -1,0 +1,4 @@
+{%- from "syncthing/map.jinja" import syncthing_settings with context -%}
+{%- for file in syncthing_settings.folders[folder].stignore.files %}
+{{ file }}
+{%- endfor %}
